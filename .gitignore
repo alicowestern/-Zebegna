@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Package manager internals
+.pnp/
+.pnp.*
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Build and cache outputs
+.next/
+frontend/.next/
+out/
+dist/
+build/
+coverage/
+.turbo/
+.cache/
+
+# Generated files
+next-env.d.ts
+*.tsbuildinfo
+frontend/build_output.txt
+
+# Frontend: keep only source code
+frontend/*
+!frontend/src/
+!frontend/src/**
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Deployment
+.vercel/
+
+# Java / Maven (backend)
+backend/target/
+**/target/
+*.class
+*.iml
+*.classpath
+*.project
+backend/apache-maven-3.9.6/
+backend/mvn_output.txt
+
+# Backend: allow only required tracked files
+backend/*
+!backend/src/
+!backend/src/**
+!backend/pom.xml
+!backend/mvnw
+!backend/mvnw.cmd
+!backend/.mvn/
+!backend/.mvn/wrapper/
+!backend/.mvn/wrapper/*
