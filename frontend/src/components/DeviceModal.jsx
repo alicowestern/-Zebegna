@@ -19,7 +19,7 @@ const F = ({ name, label, required, children, errors }) => (
     </div>
 )
 
-export default function DeviceModal({ title, device, onClose, onSave }) {
+export default function DeviceModal({ title, device, onClose, onSave, onRegisterAndPass }) {
     const [form, setForm] = useState(() => device
         ? {
             deviceName: device.deviceName || '',
@@ -37,7 +37,8 @@ export default function DeviceModal({ title, device, onClose, onSave }) {
         : { ...EMPTY }
     )
     const [errors, setErrors] = useState({})
-    const [saving, setSaving] = useState(false)
+    const [saving, setSaving] = useState(false)       // normal save
+    const [passing, setPassing] = useState(false)     // register & pass
 
     const set = (key, val) => {
         setForm(f => ({ ...f, [key]: val }))
@@ -54,35 +55,49 @@ export default function DeviceModal({ title, device, onClose, onSave }) {
         return errs
     }
 
+    const buildPayload = () => ({
+        deviceName: form.deviceName.trim(),
+        deviceType: form.deviceType.trim(),
+        serialNumber: form.serialNumber.trim(),
+        reason: form.reason,
+        notes: form.notes,
+        supportingDocument: form.supportingDocument,
+        ...(form.personId
+            ? { personId: Number(form.personId) }
+            : {
+                ownerName: form.ownerName.trim(),
+                ownerIdentifier: form.ownerIdentifier.trim(),
+                ownerType: form.ownerType,
+                ownerDepartment: form.ownerDepartment.trim(),
+            }
+        ),
+    })
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         const errs = validate()
         if (Object.keys(errs).length > 0) { setErrors(errs); return }
-
         setSaving(true)
         try {
-            const payload = {
-                deviceName: form.deviceName.trim(),
-                deviceType: form.deviceType.trim(),
-                serialNumber: form.serialNumber.trim(),
-                reason: form.reason,
-                notes: form.notes,
-                supportingDocument: form.supportingDocument,
-                ...(form.personId
-                    ? { personId: Number(form.personId) }
-                    : {
-                        ownerName: form.ownerName.trim(),
-                        ownerIdentifier: form.ownerIdentifier.trim(),
-                        ownerType: form.ownerType,
-                        ownerDepartment: form.ownerDepartment.trim(),
-                    }
-                ),
-            }
-            await onSave(payload)
+            await onSave(buildPayload())
         } catch (err) {
             setErrors({ _global: err.message })
         } finally {
             setSaving(false)
+        }
+    }
+
+    // Walk-in / company-device-at-exit: register then immediately approve
+    const handleRegisterAndPass = async () => {
+        const errs = validate()
+        if (Object.keys(errs).length > 0) { setErrors(errs); return }
+        setPassing(true)
+        try {
+            await onRegisterAndPass(buildPayload())
+        } catch (err) {
+            setErrors({ _global: err.message })
+        } finally {
+            setPassing(false)
         }
     }
 
@@ -187,7 +202,21 @@ export default function DeviceModal({ title, device, onClose, onSave }) {
 
                     <div className="modal-footer">
                         <button type="button" className="btn btn-ghost" onClick={onClose}>Cancel</button>
-                        <button type="submit" className="btn btn-primary" disabled={saving}>
+
+                        {/* Walk-in: register the device AND immediately approve exit in one click */}
+                        {!device && onRegisterAndPass && (
+                            <button
+                                type="button"
+                                className="btn btn-warning"
+                                disabled={saving || passing}
+                                onClick={handleRegisterAndPass}
+                                title="Register this device and immediately mark as passed — use for walk-ins or company devices at exit"
+                            >
+                                {passing ? <><span className="spinner" /> Processing…</> : 'Register & Pass'}
+                            </button>
+                        )}
+
+                        <button type="submit" className="btn btn-primary" disabled={saving || passing}>
                             {saving ? <><span className="spinner" /> Saving…</> : device ? 'Save Changes' : 'Register Device'}
                         </button>
                     </div>

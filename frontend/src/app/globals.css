@@ -10,37 +10,37 @@
 }
 
 :root {
-  /* Color Tokens - Softened dark SaaS theme */
-  --bg-primary: #0F1117;
-  --bg-secondary: #141720;
-  --bg-card: #1A1D26;
-  --bg-elevated: #1F2330;
-  --bg-hover: #262A36;
+  /* Color Tokens - Light day-shift professional theme */
+  --bg-primary: #f3f6fa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-elevated: #f8fafc;
+  --bg-hover: #eef3f9;
 
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-active: rgba(255, 255, 255, 0.14);
+  --border-subtle: #d9e2ec;
+  --border-active: #b7c7da;
 
-  --text-primary: #EDEDED;
-  --text-secondary: #A1A1AA;
-  --text-muted: #71717A;
+  --text-primary: #142133;
+  --text-secondary: #415366;
+  --text-muted: #697b8e;
 
   /* Muted Accents */
-  --accent-white: #FFFFFF;
-  --accent-white-h: #F4F4F5;
-  --accent-blue: #3B82F6;
-  --accent-blue-h: #2563EB;
-  --accent-green: #10B981;
-  --accent-green-h: #059669;
-  --accent-red: #EF4444;
-  --accent-red-h: #DC2626;
+  --accent-white: #ffffff;
+  --accent-white-h: #f7fafc;
+  --accent-blue: #2366d1;
+  --accent-blue-h: #1d57b3;
+  --accent-green: #1f8f5f;
+  --accent-green-h: #17734c;
+  --accent-red: #d84b4b;
+  --accent-red-h: #b93a3a;
 
-  --gold: #D4A853;
-  --gold-glow: rgba(212, 168, 83, 0.1);
+  --gold: #8f6a2a;
+  --gold-glow: rgba(143, 106, 42, 0.16);
 
   /* Status badge colors - muted */
-  --status-pending: #F59E0B;
-  --status-approved: #10B981;
-  --status-manual: #8B5CF6;
+  --status-pending: #c27910;
+  --status-approved: #1f8f5f;
+  --status-manual: #445fc9;
 
   /* Spacing Grid */
   --s1: 4px;
@@ -58,9 +58,9 @@
   --r3: 8px;
   --r4: 12px;
 
-  /* Linear/Vercel style shadows */
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  /* Soft daylight shadows */
+  --shadow-card: 0 8px 24px rgba(15, 35, 60, 0.08);
+  --shadow-modal: 0 18px 42px rgba(20, 45, 72, 0.16), 0 0 0 1px rgba(92, 122, 156, 0.12);
 }
 
 html {
@@ -131,7 +131,7 @@ body {
   font-family: 'Noto Sans Ethiopic', sans-serif;
   font-size: 20px;
   font-weight: 600;
-  background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
+  background: linear-gradient(180deg, #1e3650 0%, #4b6785 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -284,14 +284,14 @@ body {
 }
 
 .btn-primary {
-  background: var(--text-primary);
-  color: var(--bg-primary);
-  border-color: var(--text-primary);
+  background: var(--accent-blue);
+  color: #ffffff;
+  border-color: var(--accent-blue);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #D4D4D8;
-  border-color: #D4D4D8;
+  background: var(--accent-blue-h);
+  border-color: var(--accent-blue-h);
 }
 
 .btn-success {
@@ -427,7 +427,7 @@ body {
   color: var(--text-primary);
 }
 
-/* ===== STATS BAR (SEGMENTED TABS) ===== */
+/* ===== STATS BAR ===== */
 .stats-bar {
   display: flex;
   gap: var(--s5);
@@ -547,7 +547,7 @@ body {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 12px;
   color: var(--text-secondary);
-  background: var(--bg-primary);
+  background: var(--bg-elevated);
   padding: 2px 6px;
   border-radius: var(--r1);
   border: 1px solid var(--border-subtle);
@@ -558,7 +558,7 @@ body {
   color: var(--text-primary);
 }
 
-/* ===== STATUS BADGE (MINIMAL) ===== */
+/* ===== STATUS BADGE ===== */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -615,8 +615,8 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(22, 37, 57, 0.28);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -793,53 +793,171 @@ textarea.form-control {
   margin-bottom: var(--s3);
 }
 
-/* ===== LOGIN PAGE ===== */
+/* ========================================
+   LOGIN PAGE — PROFESSIONAL SPLIT SCREEN
+   ======================================== */
+
 .login-page {
   min-height: 100vh;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at top, #1a2340 0%, var(--bg-primary) 70%);
-  padding: var(--s6);
+  overflow: hidden;
+}
+
+/* ── LEFT: Full-bleed background image panel ── */
+.login-panel-image {
+  position: absolute;
+  inset: 0;
+  background-image: url('/bg-login.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 52px 56px;
+  min-height: 100vh;
+}
+
+/* Subtle dark gradient ONLY at the bottom — image stays fully visible */
+.login-panel-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      rgba(6, 15, 28, 0.05) 0%,
+      rgba(6, 15, 28, 0.10) 50%,
+      rgba(6, 15, 28, 0.62) 100%);
+  pointer-events: none;
+}
+
+.login-panel-caption {
+  position: relative;
+  z-index: 1;
+}
+
+.login-panel-caption .cap-ethiopic {
+  font-family: 'Noto Sans Ethiopic', sans-serif;
+  font-size: 56px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f5d97a 0%, #d9a84e 55%, #f8e8a8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 2px 16px rgba(0, 0, 0, 0.55));
+}
+
+.login-panel-caption .cap-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  letter-spacing: 0.01em;
+  margin-bottom: 10px;
+}
+
+.login-panel-caption .cap-sub {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.70);
+  max-width: 400px;
+  line-height: 1.6;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* ── RIGHT: Clean white form panel ── */
+.login-panel-form {
+  width: 100%;
+  min-height: 100vh;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .login-card {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--r4);
-  padding: var(--s10) var(--s8);
   width: 100%;
-  max-width: 420px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  max-width: 320px;
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r4);
+  box-shadow: 0 8px 32px rgba(15, 35, 60, 0.10);
+  padding: 22px 28px 24px;
 }
 
+/* Brand block */
 .login-brand {
   text-align: center;
-  margin-bottom: var(--s8);
+  margin-bottom: 10px;
+}
+
+.login-brand-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(145deg, #1a3a5c 0%, #2366d1 100%);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  box-shadow: 0 5px 18px rgba(35, 102, 209, 0.28);
+}
+
+.login-brand-icon svg {
+  width: 28px;
+  height: 28px;
+  color: #ffffff;
 }
 
 .login-ethiopic {
   font-family: 'Noto Sans Ethiopic', sans-serif;
-  font-size: 42px;
+  font-size: 30px;
   font-weight: 700;
-  background: linear-gradient(135deg, #d4a853 0%, #f0cc7a 50%, #b8862e 100%);
+  background: linear-gradient(135deg, #c4922a 0%, #e8c060 50%, #b07825 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 16px var(--gold-glow));
   display: block;
   line-height: 1.1;
-  margin-bottom: 6px;
+  margin-bottom: 0;
+}
+
+.login-brand-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .login-subtitle {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-muted);
-  margin-top: var(--s2);
+  margin-top: 5px;
+  line-height: 1.4;
 }
 
+/* Heading above form */
+.login-heading {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.login-heading-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+/* Form */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -855,6 +973,50 @@ textarea.form-control {
   justify-content: center;
   align-items: center;
   gap: var(--s2);
+  width: 100%;
+  border-radius: var(--r3);
+  margin-top: 6px;
+}
+
+/* Footer note under button */
+.login-footer-note {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Responsive: stack vertically on small screens ── */
+@media (max-width: 820px) {
+  .login-panel-image {
+    padding: 28px 24px;
+    justify-content: flex-end;
+  }
+
+  .login-panel-caption .cap-ethiopic {
+    font-size: 40px;
+  }
+
+  .login-panel-caption .cap-title {
+    font-size: 19px;
+  }
+
+  .login-panel-caption .cap-sub {
+    display: none;
+  }
+
+  .login-panel-form {
+    min-height: 100vh;
+    padding: 24px 16px;
+    justify-content: center;
+  }
+
+  .login-card {
+    max-width: 320px;
+  }
 }
 
 /* ===== EMPTY STATE ===== */
@@ -874,7 +1036,7 @@ textarea.form-control {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 
 .empty-state .empty-desc {
@@ -905,7 +1067,7 @@ textarea.form-control {
   padding: 80px;
 }
 
-/* ===== AUTO-REFRESH INDICATOR ===== */
+/* ===== AUTO-REFRESH DOT ===== */
 .refresh-dot {
   width: 6px;
   height: 6px;
@@ -948,7 +1110,7 @@ textarea.form-control {
   font-weight: 500;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE — MAIN APP ===== */
 @media (max-width: 900px) {
   .sidebar {
     width: 200px;

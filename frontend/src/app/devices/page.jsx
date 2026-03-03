@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 import { format } from 'date-fns'
 import {
     getDevices, getSerialSuggestions, registerDevice,
-    updateDevice, deleteDevice, approveExit, manualVerification
+    updateDevice, deleteDevice, approveExit
 } from '@/services/api'
 import DeviceModal from '@/components/DeviceModal'
 import ConfirmModal from '@/components/ConfirmModal'
@@ -117,16 +117,20 @@ export default function GateOfficerPage() {
         }
     }
 
-    const handleManual = async (device) => {
-        setLoaderFor(device.id, 'manual')
+    // Walk-in / company device at exit: register then immediately approve
+    const handleRegisterAndPass = async (formData) => {
         try {
-            await manualVerification(device.id)
-            toast.success(`Manual verification done: ${device.serialNumber}`, { duration: 5000 })
+            const res = await registerDevice(formData)
+            const newId = res.data.id
+            await approveExit(newId)
+            toast.success(`Walk-in registered and passed: ${res.data.serialNumber}`, { duration: 5000 })
+            setShowRegister(false)
             fetchDevices()
         } catch (err) {
-            toast.error(err.response?.data?.error || 'Manual verification failed')
-        } finally {
-            setLoaderFor(device.id, null)
+            const msg = err.response?.data?.error
+                || Object.values(err.response?.data || {})[0]
+                || 'Register & Pass failed'
+            throw new Error(msg)
         }
     }
 
@@ -243,7 +247,7 @@ export default function GateOfficerPage() {
                     className={`stat-chip manual ${filter === 'MANUAL' ? 'active' : ''}`}
                     onClick={() => setFilter('MANUAL')}
                     style={{ cursor: 'pointer' }}
-                >{stats.manual} Manual</div>
+                >{stats.manual} Override</div>
             </div>
 
             {/* ── Device Table ────────────────────────────────────────────── */}
@@ -289,17 +293,22 @@ export default function GateOfficerPage() {
                                         <td>{fmtDate(device.registrationDate)}</td>
                                         <td>
                                             <span className={`status-badge ${device.verificationStatus}`}>
-                                                {device.verificationStatus}
+                                                {device.verificationStatus === 'APPROVED' ? 'Verified'
+                                                    : device.verificationStatus === 'MANUAL' ? 'Manual'
+                                                        : 'Pending'}
                                             </span>
                                             {device.verifiedBy && (
                                                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '3px' }}>by {device.verifiedBy}</div>
+                                            )}
+                                            {device.verificationDate && (
+                                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>{fmtDate(device.verificationDate)}</div>
                                             )}
                                         </td>
                                         <td>{device.deviceType}</td>
                                         <td>{REASON_LABELS[device.reason] || device.reason}</td>
                                         <td>
                                             <div className="action-buttons">
-                                                {/* Approve & Manual - only show if PENDING */}
+                                                {/* Approve - only show if PENDING. Manual removed: walk-ins use Register & Pass instead */}
                                                 {device.verificationStatus === 'PENDING' ? (
                                                     user?.role !== 'ADMIN' ? (
                                                         <>
@@ -310,15 +319,6 @@ export default function GateOfficerPage() {
                                                                 onClick={() => handleApprove(device)}
                                                             >
                                                                 {actionLoading[device.id] === 'approve' ? <span className="spinner" /> : 'Approve'}
-                                                            </button>
-
-                                                            <button
-                                                                className="btn btn-warning btn-sm"
-                                                                title="Manual Verification"
-                                                                disabled={!!actionLoading[device.id]}
-                                                                onClick={() => handleManual(device)}
-                                                            >
-                                                                {actionLoading[device.id] === 'manual' ? <span className="spinner" /> : 'Manual'}
                                                             </button>
                                                         </>
                                                     ) : (
@@ -333,7 +333,11 @@ export default function GateOfficerPage() {
                                                     )
                                                 ) : (
                                                     <div style={{
-                                                        color: device.verificationStatus === 'APPROVED' ? 'var(--accent-green)' : 'var(--accent-blue)',
+                                                        color: device.verificationStatus === 'APPROVED'
+                                                            ? 'var(--accent-green)'
+                                                            : device.verificationStatus === 'MANUAL'
+                                                                ? 'var(--status-manual)'
+                                                                : 'var(--accent-blue)',
                                                         fontSize: '13px',
                                                         fontWeight: '600',
                                                         display: 'flex',
@@ -341,7 +345,9 @@ export default function GateOfficerPage() {
                                                         gap: '6px',
                                                         padding: '6px 0'
                                                     }}>
-                                                        {device.verificationStatus === 'APPROVED' ? 'Approved ✓' : 'Verified'}
+                                                        {device.verificationStatus === 'APPROVED'
+                                                            ? 'Verified ✓'
+                                                            : 'Manual ✓'}
                                                     </div>
                                                 )}
 
@@ -386,6 +392,7 @@ export default function GateOfficerPage() {
                         title="Register New Device"
                         onClose={() => setShowRegister(false)}
                         onSave={(data) => handleSaveDevice(data, false)}
+                        onRegisterAndPass={handleRegisterAndPass}
                     />
                 )
             }
